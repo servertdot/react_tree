@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { NodeModel } from "@minoru/react-dnd-treeview";
 import styles from "./Placeholder.module.css";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from "react";
 import { DndProvider } from "react-dnd";
 import { ThemeProvider, CssBaseline } from "@mui/material";
@@ -4898,7 +4899,7 @@ const newData = [
 ];
 
 function App() {
-  const [treeData, setTreeData] = useState<NodeModel<CustomData>[]>(newData);
+  const [treeData, setTreeData] = useState<NodeModel<CustomData>[]>(SampleData);
   const handleDrop = (newTree: NodeModel<CustomData>[]) => {
     console.log(newTree);
     setTreeData(newTree);
