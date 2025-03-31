@@ -18,3 +18,8 @@
   align-items: center;
   display: flex;
 }
+
+
+.out {
+  background-color: rgba(238, 105, 105, 0.905) !important;
+}

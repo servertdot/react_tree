@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { DndProvider } from "react-dnd";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import {
@@ -21,7 +21,7 @@ const newData = [
     id: "a9e6bb05-5e9f-44f2-aa57-bd24db48fedb",
     title: "Продуктовый каталог",
     isEndGroup: false,
-    parent: null,
+    parent: 0,
     droppable: true,
   },
   {
@@ -4899,71 +4899,80 @@ const newData = [
 ];
 
 function App() {
-  const [treeData, setTreeData] = useState<NodeModel<CustomData>[]>(SampleData);
+  const [treeData, setTreeData] = useState<NodeModel<CustomData>[]>(newData.map(item => ({
+    ...item,
+    text: item.title
+  })));
+  
   const handleDrop = (newTree: NodeModel<CustomData>[]) => {
-    console.log(newTree);
     setTreeData(newTree);
   };
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
   console.log(treeData);
 
+  console.log('render')
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+     <div ref={parentRef} className={styles.wrapper}>
       <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-        <div className={styles.app}>
-          <Tree
-            tree={treeData}
-            rootId={0}
-            render={(node, { depth, isOpen, onToggle }) => (
-              <CustomNode
-                node={node}
-                depth={depth}
-                isOpen={isOpen}
-                onToggle={onToggle}
-              />
-            )}
-            dragPreviewRender={(monitorProps) => (
-              <CustomDragPreview monitorProps={monitorProps} />
-            )}
-            onDrop={handleDrop}
-            classes={{
-              root: styles.treeRoot,
-              draggingSource: styles.draggingSource,
-              placeholder: styles.placeholderContainer,
-              dropTarget: styles.dropTarget,
-            }}
-            sort={false}
-            insertDroppableFirst={false}
-            canDrag={(p) => {
-              console.log;
-              if (p.parent === 0) {
-                return false;
-              }
-              // if (dropTargetId === 0) {
-              //   return false;
-              // }
+          <div className={styles.app}>
+            <Tree
+              tree={treeData}
+              rootId={0}
+              render={(node, { depth, isOpen, onToggle }) => (
+                <CustomNode
+                  node={node}
+                  depth={depth}
+                  isOpen={isOpen}
+                  onToggle={onToggle}
+                />
+              )}
+              dragPreviewRender={(monitorProps) => (
+                <CustomDragPreview parentRef={parentRef} monitorProps={monitorProps} />
+              )}
+              onDrop={handleDrop}
+              classes={{
+                root: styles.treeRoot,
+                draggingSource: styles.draggingSource,
+                placeholder: styles.placeholderContainer,
+                dropTarget: styles.dropTarget,
+              }}
+              sort={false}
+              insertDroppableFirst={false}
+              canDrag={(p) => {
+                // console.log;
+                if (p.parent === 0) {
+                  return false;
+                }
+                // if (dropTargetId === 0) {
+                //   return false;
+                // }
 
-              return true;
-            }}
-            canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
-              console.log("canDrop", dragSource, dropTargetId, dropTarget);
-              // console.log(dropTargetId);
-
-              if (dropTargetId === null) {
-                return false;
-              }
-              if (dragSource?.parent === dropTargetId) {
                 return true;
-              }
-            }}
-            dropTargetOffset={10}
-            placeholderRender={(node, { depth }) => (
-              <Placeholder node={node} depth={depth} />
-            )}
-          />
-        </div>
-      </DndProvider>
+              }}
+              canDrop={(tree, { dragSource, dropTargetId, dropTarget }) => {
+                // console.log("canDrop", dragSource, dropTargetId, dropTarget);
+                // console.log(dropTargetId);
+
+                if (dropTargetId === null) {
+                  return false;
+                }
+                if (dragSource?.parent === dropTargetId) {
+                  return true;
+                }
+              }}
+              dropTargetOffset={10}
+              placeholderRender={(node, { depth }) => (
+                <Placeholder node={node} depth={depth} />
+              )}
+            />
+          </div>
+        </DndProvider>
+
+     </div>
     </ThemeProvider>
   );
 }

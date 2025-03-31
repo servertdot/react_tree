@@ -26,10 +26,13 @@ export const CustomNode: React.FC<Props> = (props) => {
   const dragOverProps = useDragOver(id, props.isOpen, props.onToggle);
 
   const classRootNode = id === 0 ? "root-node" : undefined;
-
+  // console.log(props.node, dragOverProps)
   return (
     <div
       className={`tree-node ${styles.root} ${classRootNode}`}
+      onDragStart={(e) => {
+        handleToggle(e)
+      }}
       style={{ paddingInlineStart: indent }}
       {...dragOverProps}
     >
